@@ -43,12 +43,20 @@ const excludedRelativePaths = new Set([
 /**
  * Checks if a path should be excluded based on relative or folder exclusion lists.
  */
+/**
+ * Checks if a path should be excluded based on relative or folder exclusion lists.
+ */
 function isExcludedPath(relativePath) {
-  // Use the Set directly without spread
-  if (excludedFolders.has(path.basename(relativePath))) {
+  // Normalize path separators for Windows
+  const normalizedPath = relativePath.replace(/\\/g, '/');
+
+  // Check excluded folders and relative paths
+  if (excludedFolders.has(path.basename(normalizedPath))) {
     return true;
   }
-  if ([...excludedRelativePaths].some(prefix => relativePath === prefix || relativePath.startsWith(prefix + '/'))) {
+  if ([...excludedRelativePaths].some(prefix => 
+      normalizedPath === prefix || normalizedPath.startsWith(prefix + '/')
+  )) {
     return true;
   }
   return false;
