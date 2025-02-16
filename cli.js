@@ -57,8 +57,8 @@ function getFolderStructure(dir, currentPath = '') {
       // Build the new relative path
       const newPath = currentPath ? path.join(currentPath, item) : item;
 
-      // Check if this folder's relative path should be excluded
-      if (excludedRelativePaths.has(newPath)) {
+      // Check if this folder's relative path should be excluded by checking prefixes.
+      if ([...excludedRelativePaths].some(prefix => newPath === prefix || newPath.startsWith(prefix + path.sep))) {
         return; // Skip this folder and its contents
       }
 
