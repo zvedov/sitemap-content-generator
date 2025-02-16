@@ -1,6 +1,6 @@
 {
     "name": "sitemap-content-generator",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Generate folder structure and filtered content from your project files",
     "main": "cli.js",
     "bin": {
