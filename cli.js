@@ -43,22 +43,22 @@ const excludedRelativePaths = new Set([
 /**
  * Checks if a path should be excluded based on relative or folder exclusion lists.
  */
-/**
- * Checks if a path should be excluded based on relative or folder exclusion lists.
- */
 function isExcludedPath(relativePath) {
-  // Normalize path separators for Windows
-  const normalizedPath = relativePath.replace(/\\/g, '/');
+  // Normalize all paths to forward slashes (compatible across OS)
+  const normalizedPath = path.normalize(relativePath).replace(/\\/g, '/');
 
-  // Check excluded folders and relative paths
-  if (excludedFolders.has(path.basename(normalizedPath))) {
+  // Check excluded folders (by exact match or by folder prefix)
+  if ([...excludedFolders].has(path.basename(normalizedPath))) {
     return true;
   }
+
+  // Check excluded relative paths (e.g., components/ui and subdirectories)
   if ([...excludedRelativePaths].some(prefix => 
-      normalizedPath === prefix || normalizedPath.startsWith(prefix + '/')
+      normalizedPath === prefix || normalizedPath.startsWith(`${prefix}/`)
   )) {
     return true;
   }
+
   return false;
 }
 
@@ -73,8 +73,11 @@ function getFolderStructure(dir, currentPath = '') {
   items.forEach((item) => {
     const itemPath = path.join(dir, item);
     const stats = fs.statSync(itemPath);
-    const newPath = currentPath ? path.join(currentPath, item) : item;
+    const newPath = path.normalize(
+      currentPath ? path.join(currentPath, item) : item
+    ).replace(/\\/g, '/');
 
+    // Apply exclusion rule
     if (isExcludedPath(newPath)) {
       return; // Skip excluded paths entirely
     }
