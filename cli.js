@@ -44,10 +44,11 @@ const excludedRelativePaths = new Set([
  * Checks if a path should be excluded based on relative or folder exclusion lists.
  */
 function isExcludedPath(relativePath) {
-  if ([...excludedRelativePaths].some(prefix => relativePath === prefix || relativePath.startsWith(prefix + '/'))) {
+  // Use the Set directly without spread
+  if (excludedFolders.has(path.basename(relativePath))) {
     return true;
   }
-  if ([...excludedFolders].has(path.basename(relativePath))) {
+  if ([...excludedRelativePaths].some(prefix => relativePath === prefix || relativePath.startsWith(prefix + '/'))) {
     return true;
   }
   return false;
